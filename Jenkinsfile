@@ -31,6 +31,24 @@ pipeline {
         }
       }
     }
+    stage('DT Deploy Event') {
+      steps {
+        createDynatraceDeploymentEvent(
+          envId: 'Dynatrace Tenant',
+          tagMatchRules: [
+            [
+              meTypes: [
+                [meType: 'SERVICE']
+              ],
+              tags: [
+                [context: 'CONTEXTLESS', key: 'app', value: "${env.APP_NAME}"],
+                [context: 'CONTEXTLESS', key: 'environment', value: 'staging']
+              ]
+            ]
+          ]) {
+        }
+      }
+    }
     /*
     stage('DT Deploy Event') {
       steps {
@@ -60,14 +78,14 @@ pipeline {
               ]
             ]
           ]
-        ) 
+        )
         {
           container('jmeter') {
             script {
-              def status = executeJMeter ( 
+              def status = executeJMeter (
                 scriptName: "jmeter/front-end_e2e_load.jmx",
                 resultsDir: "e2eCheck_${env.APP_NAME}",
-                serverUrl: "front-end.staging", 
+                serverUrl: "front-end.staging",
                 serverPort: 8080,
                 checkPath: '/health',
                 vuCount: 10,
@@ -85,8 +103,8 @@ pipeline {
         }
 
         perfSigDynatraceReports(
-          envId: 'Dynatrace Tenant', 
-          nonFunctionalFailure: 1, 
+          envId: 'Dynatrace Tenant',
+          nonFunctionalFailure: 1,
           specFile: "monspec/e2e_perfsig.json"
         )
       }
