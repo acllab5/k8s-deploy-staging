@@ -31,6 +31,7 @@ pipeline {
         }
       }
     }
+/*
     stage('DT Deploy Event') {
       steps {
         createDynatraceDeploymentEvent(
@@ -49,7 +50,8 @@ pipeline {
         }
       }
     }
-    /*
+*/
+
     stage('DT Deploy Event') {
       steps {
         container("curl") {
@@ -58,7 +60,7 @@ pipeline {
         }
       }
     }
-    */
+
     stage('Run production ready e2e check in staging') {
       steps {
         echo "Waiting for the service to start..."
@@ -82,7 +84,6 @@ pipeline {
         {
           container('jmeter') {
             script {
-/*
               def status = executeJMeter (
                 scriptName: "jmeter/front-end_e2e_load.jmx",
                 resultsDir: "e2eCheck_${env.APP_NAME}",
@@ -95,8 +96,9 @@ pipeline {
                 funcValidation: false,
                 avgRtValidation: 4000
               )
-*/
+/*
               def status = 0
+*/
               if (status != 0) {
                 currentBuild.result = 'FAILED'
                 error "Production ready e2e check in staging failed."
